@@ -1,6 +1,6 @@
 package com.cheese.geeksone;
 
-public enum Mode
+enum Mode
 {
     GET,
     POST,

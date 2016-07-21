@@ -1,5 +1,6 @@
 package com.cheese.geeksone;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 public class Geeksone
 {
+    Context mContext;
     Object mRequest;
     Container mContainer;
     HttpRequest mHttpRequest;
@@ -25,7 +27,11 @@ public class Geeksone
 
     String mURL, mResponse;
     int mTimeout = 5000;
-    boolean mTrustAllCert = false, mTrustAllHost = false;
+
+    public Geeksone (Context context)
+    {
+        this.mContext = context;
+    }
 
     public Geeksone GET (String url)
     {
@@ -89,18 +95,6 @@ public class Geeksone
     private void setOnCancelledListener (OnCancelledListener listener)
     {
         mCancelledListener = listener;
-    }
-
-    public Geeksone TrustAllHost(boolean b)
-    {
-        mTrustAllHost = b;
-        return this;
-    }
-
-    public Geeksone TrustAllCert(boolean b)
-    {
-        mTrustAllCert = b;
-        return this;
     }
 
     public HttpRequest getHttpRequest()
@@ -192,7 +186,7 @@ public class Geeksone
                 }
                 else
                 {
-                    if (Utils.HasConnectivity())
+                    if (Utils.HasConnectivity(mContext))
                     {
                         try
                         {

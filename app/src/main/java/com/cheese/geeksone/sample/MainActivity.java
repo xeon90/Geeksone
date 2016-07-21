@@ -10,10 +10,8 @@ import com.cheese.geeksone.OnResultListener;
 
 public class MainActivity extends AppCompatActivity implements OnResultListener, OnCancelledListener
 {
-    Geeksone Gs = new Geeksone()
-                    .setTimeout(5000)
-                    .TrustAllCert(true)
-                    .TrustAllHost(true);
+    Geeksone Gs = new Geeksone(getApplicationContext())
+                    .setTimeout(5000);
 
     @Override
     protected void onCreate (Bundle savedInstanceState)
@@ -21,23 +19,25 @@ public class MainActivity extends AppCompatActivity implements OnResultListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Gs.GET(new Container("http://json.com/get")
+        Gs.GET(new Container("http://echo.jsontest.com/key/value/one/two")
             .setOnResult(this)
             .setOnCancelled(this));
     }
 
-    @Override public void OnCancelled (Exception cause, boolean isConnection, Container container, Geeksone gs)
+    @Override
+    public void OnCancelled (Exception cause, boolean isConnection, Container container, Geeksone gs)
     {
         //Do something
         //Retry:
         gs.RETRY(container);
     }
 
-    @Override public void OnResult (Boolean result, Container container, Geeksone async)
+    @Override
+    public void OnResult (Boolean result, Container container, Geeksone gs)
     {
         if(result)
         {
-            Response resp = async.getClazz(Response.class);
+            Response resp = gs.getClazz(Response.class);
             //Do something
         }
     }

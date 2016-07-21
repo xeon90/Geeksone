@@ -77,7 +77,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_CREATED;
@@ -266,38 +265,6 @@ public class HttpRequest
       return charset;
     else
       return CHARSET_UTF8;
-  }
-
-  private static SSLSocketFactory getTrustedFactory()
-      throws HttpRequestException {
-    if (TRUSTED_FACTORY == null) {
-      final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-
-        public X509Certificate[] getAcceptedIssuers() {
-          return new X509Certificate[0];
-        }
-
-        public void checkClientTrusted(X509Certificate[] chain, String authType) {
-          // Intentionally left blank
-        }
-
-        public void checkServerTrusted(X509Certificate[] chain, String authType) {
-          // Intentionally left blank
-        }
-      } };
-      try {
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, trustAllCerts, new SecureRandom());
-        TRUSTED_FACTORY = context.getSocketFactory();
-      } catch (GeneralSecurityException e) {
-        IOException ioException = new IOException(
-            "Security exception configuring SSL context");
-        ioException.initCause(e);
-        throw new HttpRequestException(ioException);
-      }
-    }
-
-    return TRUSTED_FACTORY;
   }
 
   private static HostnameVerifier getTrustedVerifier() {
@@ -3196,22 +3163,6 @@ public class HttpRequest
     if (!values.isEmpty())
       for (Entry<?, ?> entry : values.entrySet())
         form(entry, charset);
-    return this;
-  }
-
-  /**
-   * Configure HTTPS connection to trust all certificates
-   * <p>
-   * This method does nothing if the current request is not a HTTPS request
-   *
-   * @return this request
-   * @throws HttpRequestException
-   */
-  public HttpRequest trustAllCerts() throws HttpRequestException {
-    final HttpURLConnection connection = getConnection();
-    if (connection instanceof HttpsURLConnection)
-      ((HttpsURLConnection) connection)
-          .setSSLSocketFactory(getTrustedFactory());
     return this;
   }
 
