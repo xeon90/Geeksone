@@ -1,4 +1,4 @@
-package com.cheese.geeksone;
+package com.cheese.geeksone.core;
 
 import android.support.annotation.Nullable;
 

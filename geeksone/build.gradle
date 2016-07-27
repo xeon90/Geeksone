@@ -8,12 +8,12 @@ ext {
     libraryName = 'Geeksone'
     artifact = 'geeksone'
 
-    libraryDescription = 'A easy to use Web Services Library'
+    libraryDescription = 'We aim result !'
 
     siteUrl = 'https://github.com/xeon90/Geeksone'
     gitUrl = 'https://github.com/xeon90/Geeksone.git'
 
-    libraryVersion = '0.1.2'
+    libraryVersion = '0.2.0'
 
     developerId = 'xeon90'
     developerName = 'Xeon'

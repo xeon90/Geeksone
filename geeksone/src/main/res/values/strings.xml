@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Geeksone</string>
+    <string name="gk_err_no_internet">Opps! No internet connection available. please check your settings or try again later.</string>
+    <string name="gk_err_no_response">Opps! Unable to get response from server, please try again later.</string>
+    <string name="gk_err_unknown">Opps! Unknown error, please try again.</string>
+    <string name="gk_err_connection_timeout">Opps! Connection timeout, please try again.</string>
+    <string name="gk_err_host_unreachable">Opps! Unable to reach server, please try again.</string>
+    <string name="gk_err_malformed_url">Opps! URL are not in correct format.</string>
+    <string name="gk_pb_title"></string>
+    <string name="gk_pb_message">Loading</string>
 </resources>
