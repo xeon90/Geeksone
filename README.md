@@ -13,6 +13,17 @@
 * Multi-Geeksone, perform multiple REST with multiple Geeksone and multiple listener. (Not yet confirm)
 
 #Change Log
+## Version v0.2.1
+
+>### Bug Fix
+- Blocked main thread exception
+- Auto pilot mode refomat code structure
+- Container accept Activity, cancelled Context in constructer
+
+---
+##### Release date: 08-08-2016
+
+
 ## Version v0.2.0
 
 >### Add Auto Pilot Mode

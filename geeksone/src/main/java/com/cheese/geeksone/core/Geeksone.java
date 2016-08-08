@@ -1,5 +1,6 @@
 package com.cheese.geeksone.core;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeoutException;
 
 public class Geeksone
 {
-    Context mContext;
+    Activity mActivity;
     Object mRequest;
     Container mContainer;
     HttpRequest mHttpRequest;
@@ -41,30 +42,9 @@ public class Geeksone
     AlertDialog mDialog;
     ProgressDialog mProgressDialog;
 
-    public Geeksone (Context context)
+    public Geeksone ()
     {
-        this.mContext = context;
-    }
 
-    public Geeksone (Context context, boolean autoPilot)
-    {
-        this.mContext = context;
-        this.mAutoPilot = autoPilot;
-
-        if(mAutoPilot)
-        {
-            mDialog = new AlertDialog.Builder(mContext)
-                .setCancelable(true)
-                .setNegativeButton("CANCEL", null)
-                .create();
-
-            mProgressDialog = new ProgressDialog(mContext);
-            mProgressDialog.setMessage(mContext.getString(R.string.gk_pb_message));
-            mProgressDialog.setTitle(mContext.getString(R.string.gk_pb_title));
-            mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setCanceledOnTouchOutside(false);
-        }
     }
 
     public Geeksone GET (String url)
@@ -133,16 +113,6 @@ public class Geeksone
         return this;
     }
 
-    private void setOnResultListener (OnResultListener listener)
-    {
-        mResultListener = listener;
-    }
-
-    private void setOnCancelledListener (OnCancelledListener listener)
-    {
-        mCancelledListener = listener;
-    }
-
     public Geeksone RETRY (Container c)
     {
         if (c.getMode() == Mode.GET)
@@ -154,54 +124,14 @@ public class Geeksone
         return this;
     }
 
-    private void built()
+    private void setOnResultListener (OnResultListener listener)
     {
-        mHttpRequest = null;
+        mResultListener = listener;
+    }
 
-        if(mRequestMode == Mode.GET)
-        {
-            mHttpRequest = HttpRequest
-                .get(mURL)
-                .readTimeout(mTimeout)
-                .connectTimeout(mTimeout);
-        }
-        else if(mRequestMode == Mode.POST)
-        {
-            mHttpRequest = HttpRequest
-                .post(mURL)
-                .contentType(HttpRequest.CONTENT_TYPE_JSON)
-                .send(getRequest(mRequest));
-        }
-        else if(mRequestMode == Mode.PUT)
-        {
-            mHttpRequest = HttpRequest
-                .put(mURL)
-                .contentType(HttpRequest.CONTENT_TYPE_JSON)
-                .send(getRequest(mRequest))
-                .readTimeout(mTimeout)
-                .connectTimeout(mTimeout);
-        }
-        else if (mRequestMode == Mode.DELETE)
-        {
-            mHttpRequest = HttpRequest
-                .delete(mURL)
-                .contentType(HttpRequest.CONTENT_TYPE_JSON)
-                .send(getRequest(mRequest));
-        }
-        else
-            PokeOnError(new Exception("Unsupported REST Mode"));
-
-        if(mHttpRequest != null)
-        {
-            if(mContainer.getHeader() != null)
-                mHttpRequest.headers(mContainer.getHeader());
-
-            if(mContainer.hasBasic())
-                mHttpRequest.basic(mContainer.BasicUsername(), mContainer.BasicPassword());
-
-            mHttpRequest.readTimeout(mTimeout)
-                .connectTimeout(mTimeout);
-        }
+    private void setOnCancelledListener (OnCancelledListener listener)
+    {
+        mCancelledListener = listener;
     }
 
     private void start ()
@@ -215,6 +145,53 @@ public class Geeksone
                 {
                     try
                     {
+                        mHttpRequest = null;
+
+                        if(mRequestMode == Mode.GET)
+                        {
+                            mHttpRequest = HttpRequest
+                                .get(mURL)
+                                .readTimeout(mTimeout)
+                                .connectTimeout(mTimeout);
+                        }
+                        else if(mRequestMode == Mode.POST)
+                        {
+                            mHttpRequest = HttpRequest
+                                .post(mURL)
+                                .contentType(HttpRequest.CONTENT_TYPE_JSON)
+                                .send(getRequest(mRequest));
+                        }
+                        else if(mRequestMode == Mode.PUT)
+                        {
+                            mHttpRequest = HttpRequest
+                                .put(mURL)
+                                .contentType(HttpRequest.CONTENT_TYPE_JSON)
+                                .send(getRequest(mRequest))
+                                .readTimeout(mTimeout)
+                                .connectTimeout(mTimeout);
+                        }
+                        else if (mRequestMode == Mode.DELETE)
+                        {
+                            mHttpRequest = HttpRequest
+                                .delete(mURL)
+                                .contentType(HttpRequest.CONTENT_TYPE_JSON)
+                                .send(getRequest(mRequest));
+                        }
+                        else
+                            PokeOnError(new Exception("Unsupported REST Mode"));
+
+                        if(mHttpRequest != null)
+                        {
+                            if(mContainer.getHeader() != null)
+                                mHttpRequest.headers(mContainer.getHeader());
+
+                            if(mContainer.hasBasic())
+                                mHttpRequest.basic(mContainer.BasicUsername(), mContainer.BasicPassword());
+
+                            mHttpRequest.readTimeout(mTimeout)
+                                .connectTimeout(mTimeout);
+                        }
+
                         mResponse = mHttpRequest.body();
                         return true;
                     }
@@ -232,43 +209,57 @@ public class Geeksone
             @Override protected void onPreExecute ()
             {
                 super.onPreExecute();
+                mAutoPilot = mContainer.getActivity() != null;
 
-                new Handler(Looper.getMainLooper())
-                    .post(new Runnable()
+                if(mAutoPilot)
+                {
+                    mActivity = mContainer.getActivity();
+                    mDialog = new AlertDialog.Builder(mActivity)
+                        .setCancelable(true)
+                        .setNegativeButton("CANCEL", null)
+                        .create();
+
+                    mProgressDialog = new ProgressDialog(mActivity);
+                    mProgressDialog.setMessage(mActivity.getString(R.string.gk_pb_message));
+                    mProgressDialog.setTitle(mActivity.getString(R.string.gk_pb_title));
+                    mProgressDialog.setIndeterminate(true);
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.setCanceledOnTouchOutside(false);
+                }
+
+                if(mAutoPilot && mActivity != null)
+                {
+                    mActivity.runOnUiThread(new Runnable()
                     {
                         @Override public void run ()
                         {
+                            if(mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+
                             mProgressDialog.show();
                         }
                     });
+                }
 
                 if (getRequest(mRequest) == null)
                     this.cancel(true);
-
-                try
-                {
-                    built();
-                }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace();
-                    this.cancel(true);
-                    PokeOnError(ex);
-                }
             }
 
             @Override protected void onPostExecute (Boolean aBoolean)
             {
                 super.onPostExecute(aBoolean);
 
-                new Handler(Looper.getMainLooper())
-                    .post(new Runnable()
+                if(mAutoPilot && mActivity != null)
+                {
+                    mActivity.runOnUiThread(new Runnable()
                     {
                         @Override public void run ()
                         {
-                            mProgressDialog.dismiss();
+                            if(mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
                         }
                     });
+                }
 
                 if (aBoolean)
                 {
@@ -277,7 +268,7 @@ public class Geeksone
                         if(mAutoPilot)
                             ShowDialog(R.string.gk_err_no_response);
                         else
-                            PokeOnError(new Exception(mContext.getString(R.string.gk_err_no_response)));
+                            PokeOnError(new Exception(mActivity.getString(R.string.gk_err_no_response)));
                     }
                     else if (getJSON() == null)
                     {
@@ -305,7 +296,7 @@ public class Geeksone
 
     private void Error(Exception e)
     {
-        if(Utils.HasConnectivity(mContext))
+        if(Utils.HasConnectivity(mActivity))
         {
             if (e.getCause() instanceof ConnectException || e.getCause() instanceof TimeoutException || e.getCause() instanceof SocketTimeoutException)
             {
@@ -352,7 +343,7 @@ public class Geeksone
             {
                 @Override public void run ()
                 {
-                    mDialog.setMessage(mContext.getString(stringId));
+                    mDialog.setMessage(mActivity.getString(stringId));
                     mDialog.setButton(DialogInterface.BUTTON_POSITIVE, "RETRY", new DialogInterface.OnClickListener()
                     {
                         @Override public void onClick (DialogInterface dialog, int which)

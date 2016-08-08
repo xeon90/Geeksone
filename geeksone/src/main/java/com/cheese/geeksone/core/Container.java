@@ -1,11 +1,13 @@
 package com.cheese.geeksone.core;
 
+import android.app.Activity;
 import android.support.annotation.Nullable;
 
 import java.util.Map;
 
 public class Container
 {
+    private Activity mActivity = null;
     private int Actions;
     private String URL;
     private Mode Mode;
@@ -34,15 +36,26 @@ public class Container
         return this;
     }
 
-    public int getActions ()
+    public Container setActivity(Activity act)
     {
-        return Actions;
+        mActivity = act;
+        return this;
+    }
+
+    Activity getActivity()
+    {
+        return mActivity;
     }
 
     public Container setActions (int actions)
     {
         Actions = actions;
         return this;
+    }
+
+    public int getActions ()
+    {
+        return Actions;
     }
 
     @Nullable
