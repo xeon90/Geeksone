@@ -13,6 +13,14 @@
 * Multi-Geeksone, perform multiple REST with multiple Geeksone and multiple listener. (Not yet confirm)
 
 #Change Log
+## Version v0.2.2
+
+>### Add
+- Get HTTP Response Header
+
+---
+##### Release date: 09-08-2016
+
 ## Version v0.2.1
 
 >### Bug Fix

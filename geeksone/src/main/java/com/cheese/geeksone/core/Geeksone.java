@@ -22,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public class Geeksone
@@ -463,6 +465,14 @@ public class Geeksone
         {
             return null;
         }
+    }
+
+    public String getHeader(String field)
+    {
+        if(mHttpRequest != null)
+            return mHttpRequest.header(field);
+        else
+            return null;
     }
 
     public Container getContainer ()
