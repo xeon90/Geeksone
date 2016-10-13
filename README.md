@@ -8,11 +8,19 @@
 * Support header lists
 * Auto Pilot Mode, we handle the basic error and prompt the dialog, and also progress dialog. Programmers can easier to maintain their app logic and have cleaner code.
 
-# Next Release 0.3.0
-* Support POST form data
-* Multi-Geeksone, perform multiple REST with multiple Geeksone and multiple listener. (Not yet confirm)
+# Next Release 0.4.0
+* Multi-Geeksone, perform multiple REST with multiple Geeksone and multiple listener. (Not yet confirm, still making dream)
 
 #Change Log
+## Version v0.3.0
+
+>### Add
+- HTTP POST Form-Data
+- HTTP Content-Type Configurable
+
+---
+##### Release date: 13-10-2016
+
 ## Version v0.2.2
 
 >### Add

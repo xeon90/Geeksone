@@ -22,8 +22,6 @@ import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public class Geeksone
@@ -43,10 +41,16 @@ public class Geeksone
 
     AlertDialog mDialog;
     ProgressDialog mProgressDialog;
+    String mContentType = null;
 
     public Geeksone ()
     {
 
+    }
+
+    public Geeksone(String contentType)
+    {
+        mContentType = contentType;
     }
 
     public Geeksone GET (String url)
@@ -149,6 +153,7 @@ public class Geeksone
                     {
                         mHttpRequest = null;
 
+
                         if(mRequestMode == Mode.GET)
                         {
                             mHttpRequest = HttpRequest
@@ -160,14 +165,14 @@ public class Geeksone
                         {
                             mHttpRequest = HttpRequest
                                 .post(mURL)
-                                .contentType(HttpRequest.CONTENT_TYPE_JSON)
+                                .contentType(mContentType)
                                 .send(getRequest(mRequest));
                         }
                         else if(mRequestMode == Mode.PUT)
                         {
                             mHttpRequest = HttpRequest
                                 .put(mURL)
-                                .contentType(HttpRequest.CONTENT_TYPE_JSON)
+                                .contentType(mContentType)
                                 .send(getRequest(mRequest))
                                 .readTimeout(mTimeout)
                                 .connectTimeout(mTimeout);
@@ -176,7 +181,7 @@ public class Geeksone
                         {
                             mHttpRequest = HttpRequest
                                 .delete(mURL)
-                                .contentType(HttpRequest.CONTENT_TYPE_JSON)
+                                .contentType(mContentType)
                                 .send(getRequest(mRequest));
                         }
                         else
@@ -192,6 +197,9 @@ public class Geeksone
 
                             mHttpRequest.readTimeout(mTimeout)
                                 .connectTimeout(mTimeout);
+
+                            if(mContainer.getFormData() != null)
+                                mHttpRequest.form(mContainer.getFormData());
                         }
 
                         mResponse = mHttpRequest.body();

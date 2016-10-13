@@ -14,6 +14,7 @@ public class Container
     private OnCancelledListener mOnCancelled;
     private OnResultListener mOnResult;
     private Map<String ,String> mHeader = null;
+    private Map<?, ?> mForm;
     private String mBasicUsername, mBasicPassword;
     private Boolean Basic = false;
 
@@ -135,5 +136,16 @@ public class Container
     String BasicPassword()
     {
         return mBasicPassword;
+    }
+
+    public Map<?, ?> getFormData ()
+    {
+        return mForm;
+    }
+
+    public Container setFormData (Map<?, ?> mForm)
+    {
+        this.mForm = mForm;
+        return this;
     }
 }
