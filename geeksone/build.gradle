@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/xeon90/Geeksone'
     gitUrl = 'https://github.com/xeon90/Geeksone.git'
 
-    libraryVersion = '0.3.0'
+    libraryVersion = '0.3.1'
 
     developerId = 'xeon90'
     developerName = 'Xeon'
@@ -32,7 +32,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 4
-        versionName "0.3.0"
+        versionName "0.3.1"
     }
     buildTypes {
         release {

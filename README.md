@@ -12,6 +12,14 @@
 * Multi-Geeksone, perform multiple REST with multiple Geeksone and multiple listener. (Not yet confirm, still making dream)
 
 #Change Log
+## Version v0.3.1
+
+>### Fix
+- Crash on checking network connectivity
+
+---
+##### Release date: 18-10-2016
+
 ## Version v0.3.0
 
 >### Add
