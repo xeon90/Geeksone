@@ -3,6 +3,7 @@ package com.cheese.geeksone;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,9 +13,23 @@ public class Utils
 {
     public static boolean HasConnectivity (Context c)
     {
-        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = cm.getActiveNetworkInfo();
-        return info != null && info.isAvailable() && info.isConnectedOrConnecting();
+        Log.e("Geeksone", "Context: " + String.valueOf(c == null));
+
+        if(c == null)
+            return false;
+
+        try
+        {
+            ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo info = cm.getActiveNetworkInfo();
+            Log.e("Geeksone", "Network state: " + String.valueOf(info != null && info.isAvailable() && info.isConnectedOrConnecting()));
+            return info != null && info.isAvailable() && info.isConnectedOrConnecting();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public static boolean IsValidJSON (String test)

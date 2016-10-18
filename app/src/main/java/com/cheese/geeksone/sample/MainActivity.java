@@ -1,6 +1,7 @@
 package com.cheese.geeksone.sample;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.cheese.geeksone.core.Container;
+import com.cheese.geeksone.core.ContentType;
 import com.cheese.geeksone.core.Geeksone;
 import com.cheese.geeksone.core.OnCancelledListener;
 import com.cheese.geeksone.core.OnResultListener;
@@ -17,8 +19,6 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements OnResultListener, OnCancelledListener
 {
-    //TODO: Add POST form
-    //TODO: Progress Dialog Theme Color
     Geeksone mGS, mGS2, mGS3;
     TextView tvTextView;
     Button btnGET;
@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity implements OnResultListener,
         setContentView(R.layout.activity_main);
         btnGET = (Button) findViewById(R.id.Button);
         tvTextView = (TextView) findViewById(R.id.tvTextView);
-        mActivity = this
-        ;
+        mActivity = this;
         mGS = new Geeksone()
             .setTimeout(3000);
 
@@ -40,27 +39,9 @@ public class MainActivity extends AppCompatActivity implements OnResultListener,
         {
             @Override public void onClick (View v)
             {
-//                mGS.GET(new Container("http://echo.jsontest.com/name/tester/age/30")
-//                    .setOnResult(MainActivity.this)
-//                    .setOnCancelled(MainActivity.this));
                 try
                 {
-                    Log.e("Debug", (mActivity == null) + "");
-                    JSONObject json = new JSONObject();
-                    json.put("msisdn", "393948922");
-                    json.put("deviceId", "393993jd29dj92jd");
 
-                    new Geeksone()
-                        .POST(new Container("http://appproxy.tunetalk.net/selfcareapp/api/reqPin")
-                            .setActivity(mActivity)
-                            .setOnResult(new OnResultListener()
-                            {
-                                @Override public void OnResult (Boolean result, Container container, Geeksone async, Exception ex)
-                                {
-                                    Log.e("Debug", async.getResponse());
-                                }
-                            })
-                            .setRequestBody(json));
                 }
                 catch (Exception ex)
                 {
@@ -68,6 +49,24 @@ public class MainActivity extends AppCompatActivity implements OnResultListener,
                 }
             }
         });
+
+        new Geeksone(ContentType.NULL)
+            .POST(new Container("http://app.nextngin.com/api/rest/6/activitylist")
+                .setRequestBody("apiKey=com.berjaya.ansa9b42ec37-a3a8-40c0-931c-cd05f9057d96")
+                .setOnResult(new OnResultListener()
+                {
+                    @Override public void OnResult (Boolean result, Container container, Geeksone async, Exception ex)
+                    {
+                        try
+                        {
+                            Log.e("Debug", async.getResponse());
+                        }
+                        catch (Exception exx)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+                }));
     }
 
     @Override public void OnError (Exception cause, boolean isConnection, Container container, Geeksone gs)
