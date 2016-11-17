@@ -14,8 +14,14 @@ import com.cheese.geeksone.core.ContentType;
 import com.cheese.geeksone.core.Geeksone;
 import com.cheese.geeksone.core.OnCancelledListener;
 import com.cheese.geeksone.core.OnResultListener;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnResultListener, OnCancelledListener
 {
@@ -49,24 +55,6 @@ public class MainActivity extends AppCompatActivity implements OnResultListener,
                 }
             }
         });
-
-        new Geeksone(ContentType.NULL)
-            .POST(new Container("http://app.nextngin.com/api/rest/6/activitylist")
-                .setRequestBody("apiKey=com.berjaya.ansa9b42ec37-a3a8-40c0-931c-cd05f9057d96")
-                .setOnResult(new OnResultListener()
-                {
-                    @Override public void OnResult (Boolean result, Container container, Geeksone async, Exception ex)
-                    {
-                        try
-                        {
-                            Log.e("Debug", async.getResponse());
-                        }
-                        catch (Exception exx)
-                        {
-                            ex.printStackTrace();
-                        }
-                    }
-                }));
     }
 
     @Override public void OnError (Exception cause, boolean isConnection, Container container, Geeksone gs)

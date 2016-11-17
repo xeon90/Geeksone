@@ -157,32 +157,22 @@ public class Geeksone
                         if(mRequestMode == Mode.GET)
                         {
                             mHttpRequest = HttpRequest
-                                .get(mURL)
-                                .readTimeout(mTimeout)
-                                .connectTimeout(mTimeout);
+                                .get(mURL);
                         }
                         else if(mRequestMode == Mode.POST)
                         {
                             mHttpRequest = HttpRequest
-                                .post(mURL)
-                                .contentType(mContentType)
-                                .send(getRequest(mRequest));
+                                .post(mURL);
                         }
                         else if(mRequestMode == Mode.PUT)
                         {
                             mHttpRequest = HttpRequest
-                                .put(mURL)
-                                .contentType(mContentType)
-                                .send(getRequest(mRequest))
-                                .readTimeout(mTimeout)
-                                .connectTimeout(mTimeout);
+                                .put(mURL);
                         }
                         else if (mRequestMode == Mode.DELETE)
                         {
                             mHttpRequest = HttpRequest
-                                .delete(mURL)
-                                .contentType(mContentType)
-                                .send(getRequest(mRequest));
+                                .delete(mURL);
                         }
                         else
                             PokeOnError(new Exception("Unsupported REST Mode"));
@@ -195,12 +185,16 @@ public class Geeksone
                             if(mContainer.hasBasic())
                                 mHttpRequest.basic(mContainer.BasicUsername(), mContainer.BasicPassword());
 
-                            mHttpRequest.readTimeout(mTimeout)
-                                .connectTimeout(mTimeout);
-
                             if(mContainer.getFormData() != null)
                                 mHttpRequest.form(mContainer.getFormData());
                         }
+
+                        if(mHttpRequest != null && mRequest != null)
+                            mHttpRequest
+                                .contentType(mContentType)
+                                .readTimeout(mTimeout)
+                                .connectTimeout(mTimeout)
+                                .send(getRequest(mRequest));
 
                         mResponse = mHttpRequest.body();
                         return true;
