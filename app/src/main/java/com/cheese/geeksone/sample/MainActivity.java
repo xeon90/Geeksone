@@ -13,6 +13,7 @@ import com.cheese.geeksone.core.Container;
 import com.cheese.geeksone.core.ContentType;
 import com.cheese.geeksone.core.Geeksone;
 import com.cheese.geeksone.core.OnCancelledListener;
+import com.cheese.geeksone.core.OnGlobalListener;
 import com.cheese.geeksone.core.OnResultListener;
 import com.google.gson.GsonBuilder;
 
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements OnResultListener, OnCancelledListener
+public class MainActivity extends AppCompatActivity implements OnResultListener, OnCancelledListener, OnGlobalListener
 {
     Geeksone mGS, mGS2, mGS3;
     TextView tvTextView;
@@ -47,7 +48,10 @@ public class MainActivity extends AppCompatActivity implements OnResultListener,
             {
                 try
                 {
-
+                    mGS.GET(new Container("https://gateway.yangsifu.com/api/router?action=list")
+                        .setOnGlobalListener(MainActivity.this)
+                        .setOnResult(MainActivity.this)
+                        .setActivity(MainActivity.this));
                 }
                 catch (Exception ex)
                 {
@@ -66,5 +70,10 @@ public class MainActivity extends AppCompatActivity implements OnResultListener,
     {
         if(result)
             tvTextView.setText(async.getJSON());
+    }
+
+    @Override public void OnGlobalListener (Container container, Geeksone async)
+    {
+        Log.e("Debug", async.getResponse());
     }
 }

@@ -13,6 +13,7 @@ public class Container
     private Mode Mode;
     private OnCancelledListener mOnCancelled;
     private OnResultListener mOnResult;
+    private OnGlobalListener mOnGlobal;
     private Map<String ,String> mHeader = null;
     private Map<?, ?> mForm;
     private String mBasicUsername, mBasicPassword;
@@ -146,6 +147,17 @@ public class Container
     public Container setFormData (Map<?, ?> mForm)
     {
         this.mForm = mForm;
+        return this;
+    }
+
+    public OnGlobalListener getOnGlobalListner ()
+    {
+        return mOnGlobal;
+    }
+
+    public Container setOnGlobalListener (OnGlobalListener mOnGlobal)
+    {
+        this.mOnGlobal = mOnGlobal;
         return this;
     }
 }

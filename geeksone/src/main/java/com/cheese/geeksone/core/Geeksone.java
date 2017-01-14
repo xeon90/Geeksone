@@ -35,6 +35,7 @@ public class Geeksone
     Mode mRequestMode;
     OnResultListener mResultListener;
     OnCancelledListener mCancelledListener;
+    OnGlobalListener mGlobalListener;
 
     String mURL, mResponse;
     int mTimeout = 8000;
@@ -60,6 +61,7 @@ public class Geeksone
         mContainer = new Container(url).setMode(Mode.GET);
         setOnResultListener(mContainer.getOnResult());
         setOnCancelledListener(mContainer.getOnCancelled());
+        setOnGlobalListener(mContainer.getOnGlobalListner());
         start();
         return this;
     }
@@ -72,6 +74,7 @@ public class Geeksone
         mContainer = new Container(url).setRequestBody(obj).setMode(Mode.POST);
         setOnResultListener(mContainer.getOnResult());
         setOnCancelledListener(mContainer.getOnCancelled());
+        setOnGlobalListener(mContainer.getOnGlobalListner());
         start();
         return this;
     }
@@ -84,6 +87,7 @@ public class Geeksone
         mContainer.setMode(mRequestMode);
         setOnResultListener(mContainer.getOnResult());
         setOnCancelledListener(mContainer.getOnCancelled());
+        setOnGlobalListener(mContainer.getOnGlobalListner());
         start();
         return this;
     }
@@ -97,6 +101,7 @@ public class Geeksone
         mContainer.setMode(mRequestMode);
         setOnResultListener(mContainer.getOnResult());
         setOnCancelledListener(mContainer.getOnCancelled());
+        setOnGlobalListener(mContainer.getOnGlobalListner());
         start();
         return this;
     }
@@ -138,6 +143,11 @@ public class Geeksone
     private void setOnCancelledListener (OnCancelledListener listener)
     {
         mCancelledListener = listener;
+    }
+
+    private void setOnGlobalListener(OnGlobalListener listener)
+    {
+        mGlobalListener = listener;
     }
 
     private void start ()
@@ -197,17 +207,21 @@ public class Geeksone
                                 .send(getRequest(mRequest));
 
                         mResponse = mHttpRequest.body();
+
                         return true;
                     }
                     catch (Exception e)
                     {
                         Error(e);
                         e.printStackTrace();
+
                         return false;
                     }
                 }
                 else
+                {
                     return false;
+                }
             }
 
             @Override protected void onPreExecute ()
@@ -253,17 +267,8 @@ public class Geeksone
             {
                 super.onPostExecute(aBoolean);
 
-                if(mAutoPilot && mActivity != null)
-                {
-                    mActivity.runOnUiThread(new Runnable()
-                    {
-                        @Override public void run ()
-                        {
-                            if(mProgressDialog.isShowing())
-                                mProgressDialog.dismiss();
-                        }
-                    });
-                }
+                if(mGlobalListener != null)
+                    mGlobalListener.OnGlobalListener(mContainer, Geeksone.this);
 
                 if (aBoolean)
                 {
@@ -293,6 +298,18 @@ public class Geeksone
                     {
                         PokeOnError(new NullPointerException("Unable to handle request body"));
                     }
+                }
+
+                if(mAutoPilot && mActivity != null)
+                {
+                    mActivity.runOnUiThread(new Runnable()
+                    {
+                        @Override public void run ()
+                        {
+                            if(mProgressDialog.isShowing())
+                                mProgressDialog.dismiss();
+                        }
+                    });
                 }
             }
         }.execute();
@@ -338,46 +355,6 @@ public class Geeksone
             else
                 PokeOnError(e);
         }
-    }
-
-    private void ShowDialog (final int stringId)
-    {
-        new Handler(Looper.getMainLooper())
-            .post(new Runnable()
-            {
-                @Override public void run ()
-                {
-                    mDialog.setMessage(mActivity.getString(stringId));
-                    mDialog.setButton(DialogInterface.BUTTON_POSITIVE, "RETRY", new DialogInterface.OnClickListener()
-                    {
-                        @Override public void onClick (DialogInterface dialog, int which)
-                        {
-                            RETRY(mContainer);
-                        }
-                    });
-                    mDialog.show();
-                }
-            });
-    }
-
-    private void ShowDialog (final String msg)
-    {
-        new Handler(Looper.getMainLooper())
-            .post(new Runnable()
-            {
-                @Override public void run ()
-                {
-                    mDialog.setMessage(msg);
-                    mDialog.setButton(DialogInterface.BUTTON_POSITIVE, "RETRY", new DialogInterface.OnClickListener()
-                    {
-                        @Override public void onClick (DialogInterface dialog, int which)
-                        {
-                            RETRY(mContainer);
-                        }
-                    });
-                    mDialog.show();
-                }
-            });
     }
 
     private void PokeOnError (final Exception ex)
@@ -436,23 +413,23 @@ public class Geeksone
         }
     }
 
+    public String getHeader(String field)
+    {
+        if(mHttpRequest != null)
+            return mHttpRequest.header(field);
+        else
+            return null;
+    }
+
     public <T> T getClazz (Class<T> clazz)
     {
-        if (getJSON() != null)
+        try
         {
-            try
-            {
-                return new GsonBuilder().create().fromJson(getJSON(), clazz);
-            }
-            catch (Exception ex)
-            {
-                PokeOnError(ex);
-                return null;
-            }
+            return new GsonBuilder().create().fromJson(getJSON(), clazz);
         }
-        else
+        catch (Exception ex)
         {
-            PokeOnError(new Exception("Response is null"));
+            PokeOnError(ex);
             return null;
         }
     }
@@ -469,16 +446,48 @@ public class Geeksone
         }
     }
 
-    public String getHeader(String field)
-    {
-        if(mHttpRequest != null)
-            return mHttpRequest.header(field);
-        else
-            return null;
-    }
-
     public Container getContainer ()
     {
         return mContainer;
+    }
+
+    private void ShowDialog (final int stringId)
+    {
+        new Handler(Looper.getMainLooper())
+            .post(new Runnable()
+            {
+                @Override public void run ()
+                {
+                    mDialog.setMessage(mActivity.getString(stringId));
+                    mDialog.setButton(DialogInterface.BUTTON_POSITIVE, "RETRY", new DialogInterface.OnClickListener()
+                    {
+                        @Override public void onClick (DialogInterface dialog, int which)
+                        {
+                            RETRY(mContainer);
+                        }
+                    });
+                    mDialog.show();
+                }
+            });
+    }
+
+    private void ShowDialog (final String msg)
+    {
+        new Handler(Looper.getMainLooper())
+            .post(new Runnable()
+            {
+                @Override public void run ()
+                {
+                    mDialog.setMessage(msg);
+                    mDialog.setButton(DialogInterface.BUTTON_POSITIVE, "RETRY", new DialogInterface.OnClickListener()
+                    {
+                        @Override public void onClick (DialogInterface dialog, int which)
+                        {
+                            RETRY(mContainer);
+                        }
+                    });
+                    mDialog.show();
+                }
+            });
     }
 }
